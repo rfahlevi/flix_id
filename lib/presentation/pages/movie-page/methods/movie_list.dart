@@ -28,7 +28,7 @@ List<Widget> movieList({
                         child: NetworkImageCard(
                           imageUrl: 'https://image.tmdb.org/t/p/w500/${e.posterPath}',
                           fit: BoxFit.cover,
-                          onTap: () {},
+                          onTap: () => onTap?.call(e),
                         ),
                       ))
                   .toList(),
