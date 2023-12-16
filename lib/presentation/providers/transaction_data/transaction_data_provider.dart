@@ -1,8 +1,11 @@
 import 'package:flix_id/domain/entities/result.dart';
 import 'package:flix_id/domain/entities/transaction.dart';
 import 'package:flix_id/domain/entities/user.dart';
+import 'package:flix_id/domain/usecases/create_transaction/create_transaction.dart';
+import 'package:flix_id/domain/usecases/create_transaction/create_transaction_params.dart';
 import 'package:flix_id/domain/usecases/get_transactions/get_transactions.dart';
 import 'package:flix_id/domain/usecases/get_transactions/get_transactions_params.dart';
+import 'package:flix_id/presentation/providers/usecase/create_transaction_provider.dart';
 import 'package:flix_id/presentation/providers/usecase/get_transactions_provider.dart';
 import 'package:flix_id/presentation/providers/user_data/user_data_provider.dart';
 import 'package:flutter/foundation.dart';
@@ -44,6 +47,20 @@ class TransactionData extends _$TransactionData {
         case Failed(message: final message):
           state = AsyncError(FlutterError(message), StackTrace.current);
       }
+    }
+  }
+
+  Future<void> createTransaction({required Transaction transaction}) async {
+    state = const AsyncLoading();
+
+    CreateTransaction createTransaction = ref.read(createTransactionProvider);
+    var result = await createTransaction(CreateTransactionParams(transaction: transaction));
+
+    switch (result) {
+      case Success(value: _):
+        state = const AsyncData(null);
+      case Failed(message: final message):
+        state = AsyncError(FlutterError(message), StackTrace.current);
     }
   }
 }

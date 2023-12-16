@@ -1,5 +1,4 @@
 import 'package:flix_id/methods.dart';
-import 'package:flix_id/presentation/extensions/build_context_extension.dart';
 import 'package:flix_id/presentation/pages/profile-page/methods/profile_item.dart';
 import 'package:flix_id/presentation/pages/profile-page/methods/user_info.dart';
 import 'package:flix_id/presentation/providers/router/router_provider.dart';
@@ -12,14 +11,6 @@ class ProfilePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.listen(userDataProvider, (previous, next) {
-      if (next is AsyncData && next.value == null) {
-        ref.read(routerProvider).goNamed('login');
-      } else {
-        context.showSnackbar(next.error.toString());
-      }
-    });
-
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: 20,
@@ -36,7 +27,7 @@ class ProfilePage extends ConsumerWidget {
           ),
           profileItem(
             title: 'My Wallet',
-            onTap: () {},
+            onTap: () => ref.read(routerProvider).pushNamed('wallet'),
           ),
           profileItem(
             title: 'Change Password',

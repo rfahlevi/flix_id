@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flix_id/methods.dart';
 import 'package:flix_id/presentation/extensions/build_context_extension.dart';
 import 'package:flix_id/presentation/providers/router/router_provider.dart';
@@ -6,19 +8,37 @@ import 'package:flix_id/presentation/widgets/flix_textfield.dart';
 import 'package:flix_id/presentation/widgets/loading_circullar_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 
-class RegisterPage extends ConsumerWidget {
+class RegisterPage extends ConsumerStatefulWidget {
+  const RegisterPage({super.key});
+
+  @override
+  ConsumerState<RegisterPage> createState() => _RegisterPageState();
+}
+
+class _RegisterPageState extends ConsumerState<RegisterPage> {
   final TextEditingController emailC = TextEditingController();
   final TextEditingController nameC = TextEditingController();
   final TextEditingController passwordC = TextEditingController();
   final TextEditingController retypePasswordC = TextEditingController();
-  RegisterPage({super.key});
+
+  XFile? xfile;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  void dispose() {
+    emailC.dispose();
+    nameC.dispose();
+    passwordC.dispose();
+    retypePasswordC.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     ref.listen(userDataProvider, (previous, next) {
       if (next is AsyncData && next.value != null) {
-        ref.read(routerProvider).goNamed('main');
+        ref.read(routerProvider).goNamed('main', extra: xfile != null ? File(xfile!.path) : null);
       } else if (next is AsyncError) {
         context.showSnackbar(next.error.toString());
       }
@@ -35,12 +55,21 @@ class RegisterPage extends ConsumerWidget {
               height: 70,
             ),
             verticalSpace(40),
-            const CircleAvatar(
-              radius: 50,
-              child: Icon(
-                Icons.add_a_photo_rounded,
-                size: 50,
-                color: Colors.white,
+            GestureDetector(
+              onTap: () async {
+                xfile = await ImagePicker().pickImage(source: ImageSource.gallery);
+                setState(() {});
+              },
+              child: CircleAvatar(
+                radius: 50,
+                backgroundImage: xfile != null ? FileImage(File(xfile!.path)) : null,
+                child: xfile != null
+                    ? null
+                    : const Icon(
+                        Icons.add_a_photo_rounded,
+                        size: 50,
+                        color: Colors.white,
+                      ),
               ),
             ),
             verticalSpace(40),

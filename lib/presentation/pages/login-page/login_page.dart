@@ -37,7 +37,7 @@ class LoginPage extends ConsumerWidget {
             verticalSpace(100),
             FlixTextfield(controller: emailC, label: 'Email'),
             verticalSpace(24),
-            FlixTextfield(controller: passwordC, label: 'Password', obscureText: false),
+            FlixTextfield(controller: passwordC, label: 'Password', obscureText: true),
             Align(
               alignment: Alignment.centerRight,
               child: TextButton(

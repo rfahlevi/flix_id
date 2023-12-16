@@ -21,7 +21,7 @@ class MoviePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 20),
       child: ListView(
         children: [
           Column(

@@ -1,4 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:flix_id/domain/entities/movie_detail.dart';
 import 'package:flix_id/methods.dart';
 import 'package:flix_id/presentation/misc/constants.dart';
 import 'package:flix_id/presentation/providers/movie/movie_detail_provider.dart';
@@ -10,9 +11,10 @@ import 'package:flutter/material.dart';
 import 'package:flix_id/domain/entities/movie.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../movie-page/methods/movie_overview.dart';
-import '../movie-page/methods/movie_short_info.dart';
 import 'methods/background.dart';
+import 'methods/cast_and_crew.dart';
+import 'methods/movie_overview.dart';
+import 'methods/movie_short_info.dart';
 
 class DetailPage extends ConsumerWidget {
   final Movie movie;
@@ -55,7 +57,12 @@ class DetailPage extends ConsumerWidget {
                     verticalSpace(24),
                     ...movieOverview(asyncMovieDetail: asyncMovieDetail),
                     verticalSpace(24),
-                    // ...castAndCrew(),
+                    ...castAndCrew(
+                      title: 'Cast and Crew',
+                      movie: movie,
+                      ref: ref,
+                    ),
+                    verticalSpace(40),
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
@@ -65,7 +72,13 @@ class DetailPage extends ConsumerWidget {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             )),
-                        onPressed: () {},
+                        onPressed: () {
+                          MovieDetail? movieDetail = asyncMovieDetail.valueOrNull;
+
+                          if (movieDetail != null) {
+                            ref.read(routerProvider).pushNamed('time-booking', extra: movieDetail);
+                          }
+                        },
                         child: const Text('Book this movie'),
                       ),
                     ),

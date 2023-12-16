@@ -1,18 +1,25 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:io';
+
+import 'package:flix_id/domain/entities/user.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:flix_id/presentation/extensions/build_context_extension.dart';
 import 'package:flix_id/presentation/pages/movie-page/movie_page.dart';
 import 'package:flix_id/presentation/pages/profile-page/profile_page.dart';
+import 'package:flix_id/presentation/pages/ticket-page/ticket_page.dart';
+import 'package:flix_id/presentation/providers/page/page_provider.dart';
 import 'package:flix_id/presentation/providers/router/router_provider.dart';
 import 'package:flix_id/presentation/providers/user_data/user_data_provider.dart';
 import 'package:flix_id/presentation/widgets/bottom_nav_bar.dart';
 import 'package:flix_id/presentation/widgets/bottom_nav_bar_item.dart';
-import 'package:flutter/material.dart';
-
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class MainPage extends ConsumerStatefulWidget {
+  final File? imageFile;
   const MainPage({
     Key? key,
+    this.imageFile,
   }) : super(key: key);
 
   @override
@@ -21,7 +28,19 @@ class MainPage extends ConsumerStatefulWidget {
 
 class _MainPageState extends ConsumerState<MainPage> {
   PageController pageController = PageController();
-  int selectedIndex = 0;
+
+  @override
+  void initState() {
+    User? user = ref.read(userDataProvider).valueOrNull;
+
+    if (widget.imageFile != null && user != null) {
+      ref.read(userDataProvider.notifier).uploadProfilePicture(
+            user: user,
+            imageFile: widget.imageFile!,
+          );
+    }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,19 +51,17 @@ class _MainPageState extends ConsumerState<MainPage> {
         context.showSnackbar(next.error.toString());
       }
     });
+
+    int selectedIndex = ref.watch(pageProvider);
     return Scaffold(
       body: Stack(
         children: [
           PageView(
             controller: pageController,
-            onPageChanged: (value) {
-              setState(() {
-                selectedIndex = value;
-              });
-            },
+            onPageChanged: (value) => ref.read(pageProvider.notifier).onPageChanged(value),
             children: const [
               MoviePage(),
-              Center(child: Text('Ticket Page')),
+              TicketPage(),
               ProfilePage(),
             ],
           ),
